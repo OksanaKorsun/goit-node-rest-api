@@ -1,6 +1,5 @@
 const contactsService = require("../services/contactsServices.js");
 const { HttpError } = require("../helpers/HttpError.js");
-const schema = require("../schemas/contactsSchemas.js");
 
 const getAllContacts = async (req, res, next) => {
   try {
@@ -39,10 +38,6 @@ const deleteContact = async (req, res, next) => {
 
 const createContact = async (req, res, next) => {
   try {
-    const { error } = schema.createContactSchema.validate(req.body);
-    if (error) {
-      throw HttpError(400, error.message);
-    }
     const result = await contactsService.addContact(req.body);
     res.status(201).json(result);
   } catch (error) {
@@ -58,13 +53,7 @@ const updateContact = async (req, res, next) => {
     if (bodyIsEmpty) {
       throw HttpError(400, "Body must have at least one field");
     }
-
-    const { error } = schema.updateContactSchema.validate(req.body);
-
-    if (error) {
-      throw HttpError(400, error.message);
-    }
-
+    
     const result = await contactsService.updateContact(id, req.body);
 
     if (!result) {
