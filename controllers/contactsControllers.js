@@ -1,5 +1,5 @@
 const contactsService = require("../services/contactsServices.js");
-const { HttpError } = require("../helpers/HttpError.js");
+const HttpError = require("../helpers/HttpError.js");
 
 const getAllContacts = async (req, res, next) => {
   try {
@@ -9,7 +9,6 @@ const getAllContacts = async (req, res, next) => {
     next(error);
   }
 };
-
 const getContactById = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -22,7 +21,6 @@ const getContactById = async (req, res, next) => {
     next(error);
   }
 };
-
 const deleteContact = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -30,12 +28,11 @@ const deleteContact = async (req, res, next) => {
     if (!result) {
       throw HttpError(404);
     }
-    res.status(204).json(result);
+    res.status(200).json(result);
   } catch (error) {
     next(error);
   }
 };
-
 const createContact = async (req, res, next) => {
   try {
     const result = await contactsService.addContact(req.body);
@@ -44,7 +41,6 @@ const createContact = async (req, res, next) => {
     next(error);
   }
 };
-
 const updateContact = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -53,7 +49,7 @@ const updateContact = async (req, res, next) => {
     if (bodyIsEmpty) {
       throw HttpError(400, "Body must have at least one field");
     }
-    
+
     const result = await contactsService.updateContact(id, req.body);
 
     if (!result) {

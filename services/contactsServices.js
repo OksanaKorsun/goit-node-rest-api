@@ -1,13 +1,13 @@
-const fs = require("fs/promises");
+const fs = require("node:fs/promises");
 const { nanoid } = require("nanoid");
 
-const path = require("path");
+const path = require("node:path");
 
 const contactsPath = path.resolve(__dirname, "..", "db", "contacts.json");
 
 async function listContacts() {
   try {
-    const list = await fs.readFile(contactsPath);
+    const list = await fs.readFile(contactsPath, { encoding: "utf-8" });
     return JSON.parse(list);
   } catch (error) {
     throw error;
@@ -23,7 +23,6 @@ async function getContactById(contactId) {
     throw error;
   }
 }
-// delete
 async function removeContact(contactId) {
   try {
     const allContacts = await listContacts();
@@ -50,6 +49,7 @@ async function addContact({ name, email, phone }) {
     };
     allContacts.push(newContact);
     await fs.writeFile(contactsPath, JSON.stringify(allContacts, null, 2));
+    console.log(newContact);
     return newContact;
   } catch (error) {
     throw error;
@@ -64,7 +64,7 @@ async function updateContact(contactId, updatedFields) {
     const updatedContact = { ...allContacts[index], ...updatedFields };
     allContacts[index] = updatedContact;
     await fs.writeFile(contactsPath, JSON.stringify(allContacts, null, 2));
-    return updateContact;
+    return allContacts[index];
   } catch (error) {
     throw error;
   }
