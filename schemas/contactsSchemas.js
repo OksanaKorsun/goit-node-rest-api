@@ -11,4 +11,12 @@ const updateContactSchema = Joi.object({
   email: Joi.string().email({ minDomainSegments: 2 }),
   phone: Joi.string(),
 });
-module.exports = { createContactSchema, updateContactSchema };
+
+const updateFavoriteSchema = Joi.object({
+  favorite: Joi.boolean().required(),
+});
+module.exports = {
+  createContactSchema,
+  updateContactSchema,
+  updateFavoriteSchema,
+};

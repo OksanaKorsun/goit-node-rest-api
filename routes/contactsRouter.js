@@ -5,6 +5,7 @@ const {
   deleteContact,
   createContact,
   updateContact,
+  updateFavorite,
 } = require("../controllers/contactsControllers.js");
 const validateBody = require("../helpers/validateBody");
 const shema = require("../schemas/contactsSchemas");
@@ -28,5 +29,9 @@ contactsRouter.put(
   validateBody(shema.updateContactSchema),
   updateContact
 );
-
+contactsRouter.patch(
+  "/:id/favorite",
+  validateBody(shema.updateFavoriteSchema),
+  updateFavorite
+);
 module.exports = contactsRouter;
