@@ -1,6 +1,6 @@
 const contactsService = require("../services/contactsServices.js");
 const HttpError = require("../helpers/HttpError.js");
-const Contact = require("../models/contact.js");
+const mongoose = require("mongoose");
 
 const getAllContacts = async (req, res, next) => {
   try {
@@ -14,6 +14,9 @@ const getAllContacts = async (req, res, next) => {
 const getContactById = async (req, res, next) => {
   try {
     const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw HttpError(400, "Invalid contact ID");
+    }
     const contact = await contactsService.getContactById(id);
     if (!contact) {
       throw HttpError(404);
@@ -27,6 +30,9 @@ const getContactById = async (req, res, next) => {
 const deleteContact = async (req, res, next) => {
   try {
     const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw HttpError(400, "Invalid contact ID");
+    }
     const contact = await contactsService.removeContact(id);
     if (!contact) {
       throw HttpError(404);
@@ -49,6 +55,9 @@ const createContact = async (req, res, next) => {
 const updateContact = async (req, res, next) => {
   try {
     const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw HttpError(400, "Invalid contact ID");
+    }
     const contact = {
       name: req.body.name,
       email: req.body.email,
@@ -74,11 +83,14 @@ const updateContact = async (req, res, next) => {
 };
 
 const updateFavorite = async (req, res, next) => {
-  const { id } = req.params;
-  const favorite = {
-    favorite: req.body.favorite,
-  };
   try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw HttpError(400, "Invalid contact ID");
+    }
+    const favorite = {
+      favorite: req.body.favorite,
+    };
     const result = await contactsService.updateContact(id, favorite);
     if (result === null) {
       throw HttpError(404);
