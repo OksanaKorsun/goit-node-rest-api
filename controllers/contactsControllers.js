@@ -1,10 +1,9 @@
 const contactsService = require("../services/contactsServices.js");
 const HttpError = require("../helpers/HttpError.js");
-const mongoose = require("mongoose");
 
 const getAllContacts = async (req, res, next) => {
   try {
-    const contacts = await contactsService.listContacts();
+    const contacts = await contactsService.listContacts(req.user.id);
     res.status(200).json(contacts);
   } catch (error) {
     next(error);
@@ -14,11 +13,11 @@ const getAllContacts = async (req, res, next) => {
 const getContactById = async (req, res, next) => {
   try {
     const { id } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw HttpError(400, "Invalid contact ID");
-    }
     const contact = await contactsService.getContactById(id);
-    if (!contact) {
+    if (contact === null) {
+      throw HttpError(404);
+    }
+    if (contact.owner.toString() !== req.user.id) {
       throw HttpError(404);
     }
     res.status(200).json(contact);
@@ -30,11 +29,12 @@ const getContactById = async (req, res, next) => {
 const deleteContact = async (req, res, next) => {
   try {
     const { id } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw HttpError(400, "Invalid contact ID");
-    }
     const contact = await contactsService.removeContact(id);
+
     if (!contact) {
+      throw HttpError(404);
+    }
+    if (contact.owner.toString() !== req.user.id) {
       throw HttpError(404);
     }
     res.status(200).json(contact);
@@ -45,7 +45,13 @@ const deleteContact = async (req, res, next) => {
 
 const createContact = async (req, res, next) => {
   try {
-    const contact = await contactsService.addContact(req.body);
+    const newContact = {
+      name: req.body.name,
+      email: req.body.email,
+      phone: req.body.phone,
+      owner: req.user.id,
+    };
+    const contact = await contactsService.addContact(newContact);
     res.status(201).json(contact);
   } catch (error) {
     next(error);
@@ -55,9 +61,6 @@ const createContact = async (req, res, next) => {
 const updateContact = async (req, res, next) => {
   try {
     const { id } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw HttpError(400, "Invalid contact ID");
-    }
     const contact = {
       name: req.body.name,
       email: req.body.email,
@@ -75,6 +78,9 @@ const updateContact = async (req, res, next) => {
     if (!result) {
       throw HttpError(404);
     }
+    if (result.owner.toString() !== req.user.id) {
+      throw HttpError(404);
+    }
 
     res.status(200).json(result);
   } catch (error) {
@@ -85,14 +91,16 @@ const updateContact = async (req, res, next) => {
 const updateFavorite = async (req, res, next) => {
   try {
     const { id } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw HttpError(400, "Invalid contact ID");
-    }
     const favorite = {
       favorite: req.body.favorite,
     };
+
     const result = await contactsService.updateContact(id, favorite);
+
     if (result === null) {
+      throw HttpError(404);
+    }
+    if (result.owner.toString() !== req.user.id) {
       throw HttpError(404);
     }
     res.status(200).json(result);
