@@ -1,8 +1,8 @@
 const Contact = require("../models/contact.js");
 
-async function listContacts() {
+async function listContacts(userId) {
   try {
-    const result = await Contact.find();
+    const result = await Contact.find({ owner: userId });
     return result;
   } catch (error) {
     throw error;
@@ -27,12 +27,13 @@ async function removeContact(contactId) {
   }
 }
 
-async function addContact({ name, email, phone }) {
+async function addContact({ name, email, phone, owner }) {
   try {
     const newContact = {
       name,
       email,
       phone,
+      owner,
     };
     const result = await Contact.create(newContact);
     return result;

@@ -9,14 +9,15 @@ const {
 } = require("../controllers/contactsControllers.js");
 const validateBody = require("../helpers/validateBody");
 const shema = require("../schemas/contactsSchemas");
+const validateId = require("../helpers/validateId");
 
 const contactsRouter = express.Router();
 
 contactsRouter.get("/", getAllContacts);
 
-contactsRouter.get("/:id", getContactById);
+contactsRouter.get("/:id", validateId, getContactById);
 
-contactsRouter.delete("/:id", deleteContact);
+contactsRouter.delete("/:id", validateId, deleteContact);
 
 contactsRouter.post(
   "/",
@@ -26,11 +27,13 @@ contactsRouter.post(
 
 contactsRouter.put(
   "/:id",
+  validateId,
   validateBody(shema.updateContactSchema),
   updateContact
 );
 contactsRouter.patch(
   "/:id/favorite",
+  validateId,
   validateBody(shema.updateFavoriteSchema),
   updateFavorite
 );
