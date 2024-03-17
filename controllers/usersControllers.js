@@ -1,14 +1,15 @@
 const User = require("../models/user.js");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const HttpError = require("../helpers/HttpError.js");
 
 async function register(req, res, next) {
-  const { email, password } = req.body;
+  const { email, password, subscription } = req.body;
   const normalizedEmail = email.toLowerCase();
   try {
     const user = await User.findOne({ email: normalizedEmail });
     if (user !== null) {
-      return res.status(409).json({ message: "Email in use" });
+      throw HttpError(409, "Email in use");
     }
     const salt = await bcrypt.genSalt();
     const passwordHash = await bcrypt.hash(password, salt);
@@ -16,7 +17,13 @@ async function register(req, res, next) {
     const newUser = await User.create({
       email: normalizedEmail,
       password: passwordHash,
+      subscription,
     });
+
+    await newUser.save();
+    if (!newUser) {
+      throw HttpError(400, "Bad request");
+    }
     res.status(201).json({
       user: { email: newUser.email, subscription: newUser.subscription },
     });
@@ -30,11 +37,11 @@ async function login(req, res, next) {
   try {
     const user = await User.findOne({ email: normalizedEmail });
     if (user === null) {
-      return res.status(401).send({ message: "Email or password is wrong" });
+      throw HttpError(401, "Email or password is wrong");
     }
     const isMatch = await bcrypt.compare(password, user.password);
     if (isMatch === false) {
-      return res.status(401).send({ message: "Email or password is wrong" });
+      throw HttpError(401, "Email or password is wrong");
     }
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
@@ -54,7 +61,7 @@ async function logout(req, res, next) {
     console.log(req.user.id);
     const customer = await User.findById(req.user.id);
     if (!customer) {
-      return res.status(401).json({ message: "Not authorized" });
+      throw HttpError(401, "Not authorized");
     }
     customer.token = null;
     res.status(204).json({ message: "No content" });
