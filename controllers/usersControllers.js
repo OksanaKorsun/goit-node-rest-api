@@ -58,7 +58,6 @@ async function login(req, res, next) {
 
 async function logout(req, res, next) {
   try {
-    console.log(req.user.id);
     const customer = await User.findById(req.user.id);
     if (!customer) {
       throw HttpError(401, "Not authorized");
@@ -73,7 +72,6 @@ async function logout(req, res, next) {
 async function current(req, res, next) {
   try {
     const currentUser = req.user;
-    console.log(currentUser);
     res.status(200).json({
       email: currentUser.email,
       subscription: currentUser.subscription,
