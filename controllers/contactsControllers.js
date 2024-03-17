@@ -3,7 +3,7 @@ const HttpError = require("../helpers/HttpError.js");
 
 const getAllContacts = async (req, res, next) => {
   try {
-    const contacts = await contactsService.listContacts(req.user.id);
+    const contacts = await contactsService.listContacts(req.user._id);
     res.status(200).json(contacts);
   } catch (error) {
     next(error);
@@ -17,7 +17,7 @@ const getContactById = async (req, res, next) => {
     if (contact === null) {
       throw HttpError(404);
     }
-    if (contact.owner.toString() !== req.user.id) {
+    if (contact.owner.toString() !== req.user._id.toString()) {
       throw HttpError(404);
     }
     res.status(200).json(contact);
@@ -30,11 +30,10 @@ const deleteContact = async (req, res, next) => {
   try {
     const { id } = req.params;
     const contact = await contactsService.removeContact(id);
-
     if (!contact) {
       throw HttpError(404);
     }
-    if (contact.owner.toString() !== req.user.id) {
+    if (contact.owner.toString() !== req.user._id.toString()) {
       throw HttpError(404);
     }
     res.status(200).json(contact);
@@ -49,7 +48,7 @@ const createContact = async (req, res, next) => {
       name: req.body.name,
       email: req.body.email,
       phone: req.body.phone,
-      owner: req.user.id,
+      owner: req.user._id,
     };
     const contact = await contactsService.addContact(newContact);
     res.status(201).json(contact);
@@ -78,7 +77,7 @@ const updateContact = async (req, res, next) => {
     if (!result) {
       throw HttpError(404);
     }
-    if (result.owner.toString() !== req.user.id) {
+    if (result.owner.toString() !== req.user._id.toString()) {
       throw HttpError(404);
     }
 
@@ -100,7 +99,7 @@ const updateFavorite = async (req, res, next) => {
     if (result === null) {
       throw HttpError(404);
     }
-    if (result.owner.toString() !== req.user.id) {
+    if (result.owner.toString() !== req.user._id.toString()) {
       throw HttpError(404);
     }
     res.status(200).json(result);
