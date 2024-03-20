@@ -1,4 +1,4 @@
-const Contact = require("../models/contact.js");
+import Contact from "../models/contact.js";
 
 async function listContacts(userId) {
   try {
@@ -53,7 +53,7 @@ async function updateContact(contactId, updatedFields) {
   }
 }
 
-module.exports = {
+export default {
   listContacts,
   getContactById,
   removeContact,

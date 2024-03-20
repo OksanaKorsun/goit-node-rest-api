@@ -1,15 +1,15 @@
-const express = require("express");
-const {
+import express from "express";
+import {
   getAllContacts,
   getContactById,
   deleteContact,
   createContact,
   updateContact,
   updateFavorite,
-} = require("../controllers/contactsControllers.js");
-const validateBody = require("../helpers/validateBody");
-const shema = require("../schemas/contactsSchemas");
-const validateId = require("../helpers/validateId");
+} from "../controllers/contactsControllers.js";
+import validateBody from "../middleware/validateBody.js";
+import shema from "../schemas/contactsSchemas.js";
+import validateId from "../middleware/validateId.js";
 
 const contactsRouter = express.Router();
 
@@ -37,4 +37,4 @@ contactsRouter.patch(
   validateBody(shema.updateFavoriteSchema),
   updateFavorite
 );
-module.exports = contactsRouter;
+export default contactsRouter;
