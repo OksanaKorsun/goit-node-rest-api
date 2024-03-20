@@ -1,7 +1,7 @@
-const contactsService = require("../services/contactsServices.js");
-const HttpError = require("../helpers/HttpError.js");
+import contactsService from "../services/contactsServices.js";
+import HttpError from "../helpers/HttpError.js";
 
-const getAllContacts = async (req, res, next) => {
+export const getAllContacts = async (req, res, next) => {
   try {
     const contacts = await contactsService.listContacts(req.user._id);
     res.status(200).json(contacts);
@@ -10,7 +10,7 @@ const getAllContacts = async (req, res, next) => {
   }
 };
 
-const getContactById = async (req, res, next) => {
+export const getContactById = async (req, res, next) => {
   try {
     const { id } = req.params;
     const contact = await contactsService.getContactById(id);
@@ -26,7 +26,7 @@ const getContactById = async (req, res, next) => {
   }
 };
 
-const deleteContact = async (req, res, next) => {
+export const deleteContact = async (req, res, next) => {
   try {
     const { id } = req.params;
     const contact = await contactsService.removeContact(id);
@@ -42,7 +42,7 @@ const deleteContact = async (req, res, next) => {
   }
 };
 
-const createContact = async (req, res, next) => {
+export const createContact = async (req, res, next) => {
   try {
     const newContact = {
       name: req.body.name,
@@ -57,7 +57,7 @@ const createContact = async (req, res, next) => {
   }
 };
 
-const updateContact = async (req, res, next) => {
+export const updateContact = async (req, res, next) => {
   try {
     const { id } = req.params;
     const contact = {
@@ -87,7 +87,7 @@ const updateContact = async (req, res, next) => {
   }
 };
 
-const updateFavorite = async (req, res, next) => {
+export const updateFavorite = async (req, res, next) => {
   try {
     const { id } = req.params;
     const favorite = {
@@ -106,12 +106,4 @@ const updateFavorite = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
-module.exports = {
-  getAllContacts,
-  getContactById,
-  deleteContact,
-  createContact,
-  updateContact,
-  updateFavorite,
 };

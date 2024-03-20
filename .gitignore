@@ -1,2 +1,6 @@
 node_modules
 .env
+tmp/*
+!tmp/.gitkeep
+public/avatars/*
+!public/avatars/.gitkeep

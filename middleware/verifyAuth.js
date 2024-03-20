@@ -1,5 +1,5 @@
-const jwt = require("jsonwebtoken");
-const User = require("../models/user.js");
+import jwt from "jsonwebtoken";
+import User from "../models/user.js";
 
 function auth(req, res, next) {
   const authHeader = req.headers.authorization;
@@ -34,4 +34,4 @@ function auth(req, res, next) {
     next();
   });
 }
-module.exports = auth;
+export default auth;

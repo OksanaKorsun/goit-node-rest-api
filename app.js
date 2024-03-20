@@ -1,10 +1,10 @@
-const express = require("express");
-const morgan = require("morgan");
-const cors = require("cors");
-const router = require("./routes/index.js");
-const jwt = require("jsonwebtoken");
+import express from "express";
+import morgan from "morgan";
+import cors from "cors";
+import router from "./routes/index.js";
 
-require("./db/db.js");
+
+import "./db/db.js";
 
 const app = express();
 
