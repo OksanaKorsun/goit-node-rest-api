@@ -122,9 +122,11 @@ export async function uploadAvatar(req, res, next) {
       path.join(process.cwd(), "public/avatars", req.file.filename)
     );
 
+    const avatarURL = path.join("/avatars", req.file.filename);
+
     const user = await User.findByIdAndUpdate(
       req.user._id,
-      { avatarURL: req.file.filename },
+      { avatarURL },
       { new: true }
     );
 
