@@ -1,6 +1,11 @@
 import Joi from "joi";
-const userSchema = Joi.object({
+export const userSchema = Joi.object({
   email: Joi.string().email({ minDomainSegments: 2 }).required(),
   password: Joi.string().required(),
 });
-export default userSchema;
+
+export const emailUserSchema = Joi.object({
+  email: Joi.string().email({ minDomainSegments: 2 }).required().messages({
+    "any.required": "missing required field email",
+  }),
+});

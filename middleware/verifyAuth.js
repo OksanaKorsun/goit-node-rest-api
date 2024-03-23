@@ -27,6 +27,9 @@ function auth(req, res, next) {
     if (user.token !== token) {
       return res.status(401).json({ message: "Not authorized" });
     }
+    if (user.verify === false) {
+      throw HttpError(401, "Your account is not verified");
+    }
 
     req.user = user;
     req.token = token;
